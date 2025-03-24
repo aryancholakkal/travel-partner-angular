@@ -1,0 +1,12 @@
+<header>
+    <nav class="navbar navbar-light" aria-label="Main Navigation">                        
+        <div class="d-flex w-100 justify-content-between align-items-center headerrr p-3">
+            <img src="../../../assets/company_logo.svg" alt="Company Logo" class="company_logo_nav">
+            <div class="position-absolute start-50 translate-middle-x">
+                <a class="size-increaser fw-bold text-decoration-none m-3 text-white" routerLink="/employee/new-ticket">New Ticket</a>
+                <a class="size-increaser fw-bold text-decoration-none text-white" routerLink="/employee/dashboard">Old Tickets</a>
+            </div>
+            <button type="button" class="btn btn-danger ms-auto" (click)="logout()">Logout</button>
+        </div>    
+    </nav>
+</header>

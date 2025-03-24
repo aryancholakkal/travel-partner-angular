@@ -1,0 +1,213 @@
+<div class="vh-100 new">  
+    <header>
+        <nav class="navbar navbar-light">
+            <div class="d-flex w-100 justify-content-between align-items-center headerrr p-3">
+                <img src="../assets/company_logo.svg" alt="company_logo" class="company_logo_nav">
+                <div class="position-absolute start-50 translate-middle-x">
+                    <a class="size-increaser fw-bold text-decoration-none text-white border-bottom" href="employee-dashboard.html">Requests</a>
+                </div>
+                <button type="button" class="btn btn-danger ms-auto" (click)="logout()">Logout</button>
+            </div>
+        </nav>
+    </header>
+    <main class="container-fluid">
+        <section class="col-md-10 mx-auto mt-3">
+            <div class="d-flex flex-row-reverse mb-3 opacity-50">
+                <input type="text" class="form-control w-25 bg-muted border-colorrr border-0" id="searchInput" placeholder="Search..." (input)="onSearchInput($event)">
+                <button class="btn btn-secondary me-3" id="filterButton" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+                <select class="form-select w-auto me-3" [(ngModel)]="selectedSortOption" (change)="onSortOptionChange()">
+                    <option value="start_date">Start Date</option>
+                    <option value="name">Name</option>
+                </select>
+                <button class="btn btn-secondary me-3" (click)="toggleSortDirection()">
+                    <i class="bi" [ngClass]="{'bi-sort-up': isAscending, 'bi-sort-down': !isAscending}"></i>
+                  </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered border-colorrr">
+                    <thead class="table table-bordered border-colorrr">
+                        <tr>                                  
+                            <th scope="col">Sl No</th>                                  
+                            <th scope="col">Employee Name</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">Starting Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Admin Note</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Employee Note</th>
+                            <th scope="col">Approve</th>
+                            <th scope="col">View Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ticket of filteredDetails; let i = index">
+                            <td>{{i + 1}}</td>
+                            <td>{{ticket.employee_username}}</td>
+                            <td>{{ticket.from_location}}</td>
+                            <td>{{ticket.to_location}}</td>
+                            <td>{{ticket.start_date}}</td>
+                            <td>{{ticket.end_date}}</td>
+                            <td>{{ticket.purpose_of_travel}}</td>
+                            <td>{{ticket.additional_request_admin}}</td>
+                            <td ><span class="badge" [ngClass]="{'bg-warning': ticket.manager_ticket_status === 'Request Edit', 'bg-danger': ticket.manager_ticket_status
+                                 === 'Rejected', 'bg-secondary': ticket.manager_ticket_status === 'Not Responded','bg-success': ticket.manager_ticket_status === 'Approved'}">{{ticket.manager_ticket_status}}
+                                </span>
+                            </td>
+                            <td>{{ticket.additional_note_employee}}</td>
+                            <td>
+                                <button (click)="selectedTicketId = ticket.id" type="button" class="btn btn-action" data-bs-toggle="modal" data-bs-target="#approveConfirmModal">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </td>
+                            
+                            <td>
+                                <button type="button" class="btn btn-action" data-bs-toggle="modal" data-bs-target="#Details" (click)="feedback(selectedTicketId = ticket.id)" (click)="selectedTicketId = ticket.id">
+                                    <i class="bi bi-info-circle"></i>
+                                </button>
+                            </td>
+                        </tr>                
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- Filter Modal -->
+        <section class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body m-4">
+                        <form [formGroup]="filterForm">
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Departure between</label>
+                                <input type="date" class="form-control" formControlName="startDate" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">And</label>
+                                <input type="date" class="form-control" formControlName="endDate" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="place" class="form-label">Place</label>
+                                <input type="text" class="form-control" formControlName="place" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" formControlName="status">
+                                    <option value="Approved">Approved</option>
+                                    <option value="Not Responded">Not Responded</option>
+                                    <option value="Review">Review</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="onFilterClick()" data-bs-dismiss="modal">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Details Modal -->
+        <section class="modal fade m-4" id="Details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Request Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <tr><th>Employee Name</th><td>{{ ticketEdit.employee_username }}</td></tr>
+                            <tr><th>From</th><td>{{ ticketEdit.from_location }}</td></tr>
+                            <tr><th>Destination</th><td>{{ ticketEdit.to_location }}</td></tr>
+                            <tr><th>Starting Date</th><td>{{ ticketEdit.start_date }}</td></tr>
+                            <tr><th>End Date</th><td>{{ ticketEdit.end_date }}</td></tr>
+                            <tr><th>Purpose</th><td>{{ ticketEdit.purpose }}</td></tr>
+                            <tr><th>Status</th><td>
+                              <span class="badge bg-{% if ticket.status == 'pending' %}warning{% elif ticket.status == 'approved' %}success{% elif ticket.status == 'rejected' %}danger{% endif %}">
+                                {{ ticketEdit.manager_ticket_status}}
+                              </span>
+                            </td></tr>
+                          </table>
+                          
+                        <div class="mb-3">
+                            <form [formGroup]="feedbackForm">
+                                <label for="feedback" class="form-label">Note from manager</label>
+                                <textarea class="form-control" id="feedback" rows="3" formControlName="feedbackText"></textarea>
+                            </form>    
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveConfirmModal">Approve</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectConfirmModal">Reject</button>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#requestEditConfirmModal" >Request Edit</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Approve Confirmation Modal -->
+        <section class="modal fade" id="approveConfirmModal" tabindex="-1" aria-hidden="true">
+            <section class="modal-dialog">
+                <section class="modal-content">
+                    <header class="modal-header">
+                        <h5 class="modal-title">Confirm Approval</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </header>
+                    <section class="modal-body">
+                        Are you sure you want to approve this request?
+                    </section>
+                    <footer class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button (click)="approveManager()" type="button" class="btn btn-success"  data-bs-dismiss="modal">Yes, Approve</button>
+                    </footer>
+                </section>
+            </section>
+        </section>
+
+        <!-- Reject Confirmation Modal -->
+        <section class="modal fade" id="rejectConfirmModal" tabindex="-1" aria-hidden="true">
+            <section class="modal-dialog">
+                <section class="modal-content">
+                    <header class="modal-header">
+                        <h5 class="modal-title">Confirm Reject</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </header>
+                    <section class="modal-body">
+                        Are you sure you want to reject this request?
+                    </section>
+                    <footer class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button (click)="rejectManager()" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Yes, Rejct</button>
+                    </footer>
+                </section>
+            </section>
+        </section>
+
+        <!-- Request Edit Confirmation Modal -->
+        <section class="modal fade" id="requestEditConfirmModal" tabindex="-1" aria-hidden="true">
+            <section class="modal-dialog">
+                <section class="modal-content">
+                    <header class="modal-header">
+                        <h5 class="modal-title">Confirm to request edit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </header>
+                    <section class="modal-body">
+                        Are you sure you want to edit in this request?
+                    </section>
+                    <footer class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button (click)="requestEditManager()" type="button" class="btn btn-warning"  data-bs-dismiss="modal">Yes, Request Edit</button>
+                    </footer>
+                </section>
+            </section>
+        </section>
+    </main>
+</div>

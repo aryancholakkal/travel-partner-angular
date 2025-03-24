@@ -1,0 +1,170 @@
+<div class="new vh-100">
+    <app-header></app-header>
+    <main class="container-fluid">
+        <section class="col-md-10 mx-auto mt-3">
+            <div class="d-flex flex-row-reverse mb-3 opacity-50">
+                <button class="btn btn-secondary me-3" id="filterButton" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+            </div>
+            <div class="table-responsive">                      
+                <table class="table table-bordered border-colorrr text-center">
+                    <thead class="table table-bordered border-colorrr">
+                        <tr>                                  
+                            <th scope="col">Sl No</th>                                  
+                            <th scope="col">Employee Name</th>
+                            <th scope="col">Manager Name</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">Starting Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Manager Note</th>
+                            <th scope="col">Admin Note</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Cancel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ticket of details; let i = index">
+                            <td>{{i + 1}}</td>
+                            <td>{{ticket.employee_username}}</td>
+                            <td>{{ticket.manager_username}}</td>
+                            <td>{{ticket.from_location}}</td>
+                            <td>{{ticket.to_location}}</td>
+                            <td>{{ticket.start_date}}</td>
+                            <td>{{ticket.end_date}}</td>
+                            <td>{{ticket.purpose_of_travel}}</td>
+                            <td>{{ticket.additional_request_manager}}</td>
+                            <td>{{ticket.additional_request_admin}}</td>
+                            <td><span class="badge" [ngClass]="{'bg-warning': ticket.manager_ticket_status === 'Request Edit', 'bg-danger': ticket.manager_ticket_status
+                                === 'Rejected', 'bg-secondary': ticket.manager_ticket_status === 'Not Responded','bg-success':'ticket.manager_ticket_status'}">{{ticket.manager_ticket_status}}</span></td>
+                           <td>
+                                <button type="button" class="btn btn-action" (click)="editModal(ticket.id)">
+                                    <i class="bi bi-pencil"></i>
+                                    <span>Edit</span>
+                                </button>
+                            </td>
+                            <td>
+                                <button (click)="selectedTicketId = ticket.id" class="btn btn-outline-danger btn-sm ms-2"  data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>                
+                    </tbody>
+                </table>
+            </div>
+        </section>  
+        
+        <!-- Filter Modal -->
+        <section class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body m-4">
+                        <form [formGroup]="filterForm">
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Departure between</label>
+                                <input id="startDate" type="date" class="form-control" formControlName="startDate" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">And</label>
+                                <input id="endDate" type="date" class="form-control" formControlName="endDate" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="place" class="form-label">Place</label>
+                                <input id="place" type="text" class="form-control" formControlName="place" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" class="form-select" formControlName="status">
+                                    <option value="Approved">Approved</option>
+                                    <option value="Not Responded">Not Responded</option>
+                                    <option value="Review">Review</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="onFilterClick()" data-bs-dismiss="modal">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+          
+
+        <section *ngIf="showModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Request Details</h5>
+                        <button type="button" class="btn-close" (click)="closeModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="editTicketForm">
+                            <div class="mb-3">
+                                <label for="from_location" class="form-label">From</label>
+                                <input id="from_location" type="text" class="form-control"  formControlName="from_location" name="from_location" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="to_location" class="form-label">Destination</label>
+                                <input id="to_location" type="text" class="form-control" formControlName="to_location" name="to_location" required>
+                            </div>
+        
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Starting Date</label>
+                                <input id="start_date" type="date" class="form-control" formControlName="start_date" name="start_date" required>
+                            </div>
+        
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">End Date</label>
+                                <input id="end_date" type="date" class="form-control" formControlName="end_date" name="end_date" required>
+                            </div>
+        
+                            <div class="mb-3">
+                                <label for="purpose_of_travel" class="form-label">Purpose</label>
+                                <textarea id="purpose_of_travel" class="form-control" formControlName="purpose_of_travel" name="purpose" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="additional_request" class="form-label">Additional note</label>
+                                <textarea id="additional_request" class="form-control" formControlName="additional_request" name="purpose" required></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="saveEdit()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div *ngIf="showModal" class="modal-backdrop fade show"></div>
+
+        
+        <!-- Delete Confirmation Modal -->
+        <section class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+            <section class="modal-dialog">
+                <section class="modal-content">
+                    <header class="modal-header">
+                        <h5 class="modal-title">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </header>
+                    <section class="modal-body">
+                        Are you sure you want to delete this request?
+                    </section>
+                    <footer class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button (click)="deleteTicket()" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Yes, Delete</button>
+                    </footer>
+                </section>
+            </section>
+        </section>
+
+        
+    </main>
+</div>
