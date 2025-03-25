@@ -1,0 +1,57 @@
+<!-- navbar.component.html -->
+<nav
+  class="navbar navbar-expand-lg navbar-light headerrr"
+  aria-label="Main Navigation"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img
+        src="assets/company_logo.svg"
+        alt="Company Logo"
+        class="company_logo_nav"
+      />
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav mx-auto justify-content-center">
+        <li class="nav-item">
+          <a
+            class="nav-link size-increaser fw-bold text-decoration-none"
+            routerLink="/admin/dashboard"
+            routerLinkActive="border-bottom text-white"
+            >Requests</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link size-increaser fw-bold text-decoration-none ms-3"
+            routerLink="/admin/add-new"
+            routerLinkActive="border-bottom text-white"
+            >Add New</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link size-increaser fw-bold text-decoration-none ms-3"
+            routerLink="/admin/employee-listing"
+            routerLinkActive="border-bottom text-white"
+            >Employee Listing</a
+          >
+        </li>
+      </ul>
+      <button type="button" class="btn btn-danger" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </div>
+</nav>
